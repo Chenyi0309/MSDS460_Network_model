@@ -61,8 +61,12 @@ if st.button("Find Shortest Path"):
         # Always draw graph after click
         draw_network(graph, path=path)
 
-# Step 4: Graph visualization
+# Step 4: Graph visualization title
 st.subheader("Graph Visualization of Town Network")
+
+# Initial graph with no path highlighted
+if not st.session_state.get("path_shown", False):
+    draw_network(graph, path=None)
 
 import matplotlib.pyplot as plt
 import networkx as nx
