@@ -96,4 +96,5 @@ def draw_network(graph_dict, path=None):
     st.pyplot(plt.gcf())
 
 # Call function
-draw_network(graph, path=shortest_path)
+draw_network(graph, path=path if 'path' in locals() else None)
+
