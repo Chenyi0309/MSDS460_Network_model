@@ -60,21 +60,32 @@ if st.button("Find Shortest Path"):
             st.error("No valid route found between selected towns.")
 
 # Step 4: Graph visualization
-st.subheader("Graph Visualization of Town Network")
+import networkx as nx
+import matplotlib.pyplot as plt
+import streamlit as st
 
-# Convert to NetworkX graph
-G = nx.DiGraph()
-for u in graph:
-    for v, w in graph[u].items():
-        G.add_edge(u, v, weight=w)
+def draw_network(G, path=None):
+    # Use a force-directed layout for clearer structure
+    pos = nx.spring_layout(G, seed=42)  # Or try: nx.kamada_kawai_layout(G)
 
-# Draw the graph
-pos = nx.spring_layout(G, seed=42)  # Stable layout
-plt.figure(figsize=(10, 6))
-nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=1800, font_size=12, arrows=True)
-edge_labels = nx.get_edge_attributes(G, 'weight')
-nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-plt.title("Town Graph - Distances as Edge Weights")
+    edge_labels = nx.get_edge_attributes(G, 'weight')
 
-# Display the plot in Streamlit
-st.pyplot(plt.gcf())
+    # Set figure size for clarity
+    plt.figure(figsize=(10, 6))
+
+    # Draw all nodes and edges
+    nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=1000)
+    nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+    nx.draw_networkx_edges(G, pos, edge_color='gray', arrows=True)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
+
+    # Highlight the shortest path, if given
+    if path and len(path) > 1:
+        path_edges = list(zip(path, path[1:]))
+        nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='crimson', width=3)
+        nx.draw_networkx_nodes(G, pos, nodelist=path, node_color='orange', node_size=1100)
+
+    # Set graph title
+    plt.title("Town Graph – Distances as Edge Weights", fontsize=14)
+    plt.axis('off')
+    st.pyplot(plt.gcf())
