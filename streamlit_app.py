@@ -73,7 +73,7 @@ def draw_network(graph_dict, path=None):
             G.add_edge(u, v, weight=w)
 
     # Positioning
-    pos = nx.spring_layout(G, seed=42)
+    pos = nx.circular_layout(G)
 
     # Get weights as edge labels
     edge_labels = nx.get_edge_attributes(G, 'weight')
