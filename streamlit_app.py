@@ -62,19 +62,38 @@ if st.button("Find Shortest Path"):
 # Step 4: Graph visualization
 st.subheader("Graph Visualization of Town Network")
 
-# Convert to NetworkX graph
-G = nx.DiGraph()
-for u in graph:
-    for v, w in graph[u].items():
-        G.add_edge(u, v, weight=w)
+import matplotlib.pyplot as plt
+import networkx as nx
 
-# Draw the graph
-pos = nx.spring_layout(G, seed=42)  # Stable layout
-plt.figure(figsize=(10, 6))
-nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=1800, font_size=12, arrows=True)
-edge_labels = nx.get_edge_attributes(G, 'weight')
-nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
-plt.title("Town Graph - Distances as Edge Weights")
+def draw_network(graph_dict, path=None):
+    # Create directed graph
+    G = nx.DiGraph()
+    for u in graph_dict:
+        for v, w in graph_dict[u].items():
+            G.add_edge(u, v, weight=w)
 
-# Display the plot in Streamlit
-st.pyplot(plt.gcf())
+    # Positioning
+    pos = nx.spring_layout(G, seed=42)
+
+    # Get weights as edge labels
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+
+    # Start plotting
+    plt.figure(figsize=(10, 6))
+    nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=1200)
+    nx.draw_networkx_labels(G, pos, font_size=12, font_weight='bold')
+    nx.draw_networkx_edges(G, pos, edge_color='gray', arrows=True)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
+
+    # Highlight shortest path (if available)
+    if path and len(path) > 1:
+        path_edges = list(zip(path, path[1:]))
+        nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='crimson', width=3)
+        nx.draw_networkx_nodes(G, pos, nodelist=path, node_color='orange', node_size=1300)
+
+    plt.title("Town Graph – Distances as Edge Weights", fontsize=14)
+    plt.axis('off')
+    st.pyplot(plt.gcf())
+
+# Call function
+draw_network(graph, path=shortest_path)
