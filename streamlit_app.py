@@ -10,8 +10,10 @@ st.write("Welcome! This tool visualizes shortest paths on a graph using Dijkstra
 
 import streamlit as st
 import heapq
+import networkx as nx
+import matplotlib.pyplot as plt
 
-# Step 1: define the structure of picture
+# Step 1: Define the graph structure
 graph = {
     'Origin': {'A': 40, 'B': 60, 'C': 50},
     'A': {'B': 10, 'D': 70},
@@ -22,7 +24,7 @@ graph = {
     'Destination': {}
 }
 
-# Step 2: Dijkstra 
+# Step 2: Dijkstra's algorithm implementation
 def dijkstra(graph, start, end):
     queue = [(0, start, [])]
     visited = set()
@@ -39,7 +41,7 @@ def dijkstra(graph, start, end):
                 heapq.heappush(queue, (cost + weight, neighbor, path))
     return float("inf"), []
 
-# Step 3: Streamlit 
+# Step 3: Streamlit interface
 st.title("Shortest Path Finder: Dijkstra’s Algorithm")
 
 st.write("Welcome! This tool visualizes shortest paths on a graph using Dijkstra’s algorithm.")
@@ -57,35 +59,22 @@ if st.button("Find Shortest Path"):
         else:
             st.error("No valid route found between selected towns.")
 
-import networkx as nx
-import matplotlib.pyplot as plt
-
+# Step 4: Graph visualization
 st.subheader("Graph Visualization of Town Network")
 
-# Step 1: 定义图
-graph = {
-    'Origin': {'A': 40, 'B': 60, 'C': 50},
-    'A': {'B': 10, 'D': 70},
-    'B': {'C': 20, 'D': 55, 'E': 40},
-    'C': {'D': 50},
-    'D': {'E': 10, 'Destination': 60},
-    'E': {'Destination': 80},
-    'Destination': {}
-}
-
-# Step 2: 转换为 networkx 图
+# Convert to NetworkX graph
 G = nx.DiGraph()
-
 for u in graph:
     for v, w in graph[u].items():
         G.add_edge(u, v, weight=w)
 
-# Step 3: 绘图
-pos = nx.spring_layout(G, seed=42)  # 设定位置稳定
+# Draw the graph
+pos = nx.spring_layout(G, seed=42)  # Stable layout
 plt.figure(figsize=(10, 6))
 nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=1800, font_size=12, arrows=True)
 edge_labels = nx.get_edge_attributes(G, 'weight')
 nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
 plt.title("Town Graph - Distances as Edge Weights")
-st.pyplot(plt.gcf())
 
+# Display the plot in Streamlit
+st.pyplot(plt.gcf())
