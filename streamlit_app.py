@@ -58,6 +58,8 @@ if st.button("Find Shortest Path"):
             st.success(f"Shortest path: {' ➝ '.join(path)} (Total distance: {cost} miles)")
         else:
             st.error("No valid route found between selected towns.")
+        # Always draw graph after click
+        draw_network(graph, path=path)
 
 # Step 4: Graph visualization
 st.subheader("Graph Visualization of Town Network")
